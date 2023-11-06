@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-9.2.3">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.8">
     
     
       
@@ -26,10 +26,10 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.0e669242.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.4b4a2bd9.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.85d0ee34.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.356b1318.min.css">
       
       
 
@@ -375,6 +375,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#typingliteral" class="md-nav__link">
+    typing.Literal
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#adding-custom-field-level-attributes" class="md-nav__link">
     Adding Custom Field-level Attributes
   </a>
@@ -566,6 +573,25 @@
   
   
     <li class="md-nav__item">
+      <a href="../pydantic_v1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Pydantic V1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../pydantic/" class="md-nav__link">
         
   
@@ -735,6 +761,13 @@
         <li class="md-nav__item">
   <a href="#typingannotated" class="md-nav__link">
     typing.Annotated
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#typingliteral" class="md-nav__link">
+    typing.Literal
   </a>
   
 </li>
@@ -1176,6 +1209,48 @@ Dataclasses-avroschema will automatically generate the appropriate array if a de
 <span class="p">}</span><span class="err">&#39;</span>
 </code></pre></div>
 <p><em>(This script is complete, it should run "as is")</em></p>
+<h2 id="typingliteral">typing.Literal</h2>
+<p>Fields can be annotated with <code>typing.Literal</code> in accordance with <a href="https://peps.python.org/pep-0586/">PEP 586</a>. Note that a literal field with multiple arguments (i.e. of the form <code>typing.Literal[v1, v2, v3]</code>) is interpreted as a union of literals (i.e. <code>typing.Union[typing.Literal[v1], typing.Literal[v2], typing.Literal[v3]]</code>) in line with the PEP.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">enum</span>
+<span class="kn">import</span> <span class="nn">typing</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">dataclasses_avroschema</span> <span class="kn">import</span> <span class="n">AvroModel</span>
+
+<span class="k">class</span> <span class="nc">E</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">ONE</span> <span class="o">=</span> <span class="s2">&quot;one&quot;</span>
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">T</span><span class="p">(</span><span class="n">AvroModel</span><span class="p">):</span>
+    <span class="n">f</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Literal</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="n">E</span><span class="o">.</span><span class="n">ONE</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">avro_schema</span><span class="p">())</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">{</span>
+<span class="sd">  &quot;type&quot;: &quot;record&quot;,</span>
+<span class="sd">  &quot;name&quot;: &quot;T&quot;,</span>
+<span class="sd">  &quot;fields&quot;: [</span>
+<span class="sd">    {</span>
+<span class="sd">      &quot;name&quot;: &quot;f&quot;,</span>
+<span class="sd">      &quot;type&quot;: [</span>
+<span class="sd">        &quot;null&quot;,</span>
+<span class="sd">        &quot;long&quot;,</span>
+<span class="sd">        &quot;string&quot;,</span>
+<span class="sd">        &quot;boolean&quot;,</span>
+<span class="sd">        &quot;bytes&quot;,</span>
+<span class="sd">        {</span>
+<span class="sd">          &quot;type&quot;: &quot;enum&quot;,</span>
+<span class="sd">          &quot;name&quot;: &quot;E&quot;,</span>
+<span class="sd">          &quot;symbols&quot;: [</span>
+<span class="sd">            &quot;one&quot;</span>
+<span class="sd">          ]</span>
+<span class="sd">        }</span>
+<span class="sd">      ]</span>
+<span class="sd">    }</span>
+<span class="sd">  ]</span>
+<span class="sd">}</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</code></pre></div>
+<p><em>(This script is complete, it should run "as is")</em></p>
 <h2 id="adding-custom-field-level-attributes">Adding Custom Field-level Attributes</h2>
 <p>You may want to add field-level attributes which are not automatically populated according to the typing semantics
 listed above. For example, you might want a <code>"doc"</code> attribute or even a custom attribute (which Avro supports as long
@@ -1267,10 +1342,11 @@ In order to add custom fields, you can use the <code>field</code> descriptor of 
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "..", "features": ["search.suggest", "search.highlight", "content.tabs.link", "content.code.annotate"], "search": "../assets/javascripts/workers/search.dfff1995.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["search.suggest", "search.highlight", "content.tabs.link", "content.code.annotate"], "search": "../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.78eede0e.min.js"></script>
+      <script src="../assets/javascripts/bundle.81fa17fe.min.js"></script>
       
     
   </body>
